@@ -1,0 +1,176 @@
+definitions:
+  model.Link:
+    properties:
+      href:
+        type: string
+      method:
+        type: string
+      rel:
+        type: string
+    type: object
+  model.PingStatus:
+    properties:
+      _links:
+        items:
+          $ref: '#/definitions/model.Link'
+        type: array
+      id:
+        type: integer
+      ip:
+        type: string
+      last_success:
+        type: string
+      ping_time:
+        type: number
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/status:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all ping statuses from the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of ping statuses
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all ping statuses
+      tags:
+      - statuses
+    post:
+      consumes:
+      - application/json
+      description: Create a new ping status in the system
+      parameters:
+      - description: Ping Status
+        in: body
+        name: status
+        required: true
+        schema:
+          $ref: '#/definitions/model.PingStatus'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created ping status
+          schema:
+            $ref: '#/definitions/model.PingStatus'
+        "400":
+          description: Invalid request payload
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Failed to create status
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new ping status
+      tags:
+      - statuses
+  /api/v1/status/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a ping status by its ID
+      parameters:
+      - description: Ping Status ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Invalid ID format
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Failed to delete status
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a ping status by ID
+      tags:
+      - statuses
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific ping status by its ID
+      parameters:
+      - description: Ping Status ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ping status
+          schema:
+            $ref: '#/definitions/model.PingStatus'
+        "400":
+          description: Invalid ID format
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get a ping status by ID
+      tags:
+      - statuses
+    put:
+      consumes:
+      - application/json
+      description: Update a ping status by its ID
+      parameters:
+      - description: Ping Status ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Ping Status
+        in: body
+        name: status
+        required: true
+        schema:
+          $ref: '#/definitions/model.PingStatus'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated ping status
+          schema:
+            $ref: '#/definitions/model.PingStatus'
+        "400":
+          description: Invalid request payload or ID format
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Failed to update status
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update a ping status
+      tags:
+      - statuses
+swagger: "2.0"
