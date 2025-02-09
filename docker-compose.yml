@@ -20,14 +20,14 @@ services:
       - my_network
 
   rabbitmq:
-    image: "rabbitmq:4"
+    image: "rabbitmq:4-management"
     ports:
       - "15672:15672"
       - "5672:5672"
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       retries: 5
-      start_period: 30s
+      start_period: 5s
     networks:
       - my_network
 
@@ -44,6 +44,23 @@ services:
       - rabbitmq
     ports:
       - "8080:8080"
+    networks:
+      - my_network
+      
+  pinger:
+    build:
+      context: .
+      dockerfile: ./pinger/Dockerfile
+    environment:
+      BACKEND_URL: "http://backend:8080/api/v1/status"
+      PING_INTERVAL: "30s"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - my_network
 
